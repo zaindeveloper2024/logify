@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 )
 
 type Level uint
@@ -29,12 +30,35 @@ func New() *Logify {
 	}
 }
 
+func levelToString(level Level) string {
+	switch level {
+	case Debug:
+		return "DEBUG"
+	case Info:
+		return "INFO"
+	case Warn:
+		return "WARN"
+	case Error:
+		return "ERROR"
+	case Fatal:
+		return "FATAL"
+	}
+	return ""
+}
+
+func outputFormat(level Level, message string) string {
+	time := time.Now().Format(time.RFC3339)
+	msg := fmt.Sprintf("[%s] %s %s", levelToString(level), time, message)
+	return msg
+}
+
 func (l *Logify) log(level Level, message string, calldepth int) error {
 	if l.level < level {
 		return nil
 	}
 	logger := log.New(l.out, "", 0)
-	return logger.Output(calldepth, message)
+	msg := outputFormat(level, message)
+	return logger.Output(calldepth, msg)
 }
 
 func (l *Logify) SetOutput(w io.Writer) {
