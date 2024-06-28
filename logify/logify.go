@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-type Level uint
+type Level uint32
 
 const (
 	Debug Level = iota
@@ -17,6 +17,21 @@ const (
 	Error
 	Fatal
 )
+
+func (level Level) MarshalText() ([]byte, error) {
+	switch level {
+	case Debug:
+		return []byte("Debug"), nil
+	case Info:
+		return []byte("Info"), nil
+	case Error:
+		return []byte("Error"), nil
+	case Fatal:
+		return []byte("Fatal"), nil
+	}
+
+	return nil, fmt.Errorf("invalid log level: %d", level)
+}
 
 type Logify struct {
 	out   io.Writer
@@ -30,25 +45,13 @@ func New() *Logify {
 	}
 }
 
-func levelToString(level Level) string {
-	switch level {
-	case Debug:
-		return "DEBUG"
-	case Info:
-		return "INFO"
-	case Warn:
-		return "WARN"
-	case Error:
-		return "ERROR"
-	case Fatal:
-		return "FATAL"
-	}
-	return ""
-}
-
 func outputFormat(level Level, message string) string {
+	levelText, err := level.MarshalText()
+	if err != nil {
+		panic(err)
+	}
 	time := time.Now().Format(time.RFC3339)
-	msg := fmt.Sprintf("[%s] %s %s", levelToString(level), time, message)
+	msg := fmt.Sprintf("[%s] %s %s", levelText, time, message)
 	return msg
 }
 
