@@ -1,6 +1,7 @@
 package logify
 
 import (
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -46,6 +47,10 @@ func (l *Logify) SetLevel(level Level) {
 
 func (l *Logify) Debug(message string) {
 	l.log(Debug, message, 0)
+}
+
+func (l *Logify) DebugF(format string, i ...interface{}) {
+	l.log(Debug, fmt.Sprintf(format, i...), 0)
 }
 
 func (l *Logify) Info(message string) {

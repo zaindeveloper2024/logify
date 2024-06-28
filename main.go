@@ -7,5 +7,6 @@ import (
 func main() {
 	log := logify.New()
 	log.Debug("Hello world")
+	log.DebugF("Hello %s", "world")
 	log.Info("Hello world")
 }
