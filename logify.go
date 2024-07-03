@@ -50,7 +50,6 @@ func formatLogMessage(level Level, message string) string {
 	if err != nil {
 		panic(err)
 	}
-
 	time := time.Now().Format(time.RFC3339)
 	msg := fmt.Sprintf("[%s] %s %s", levelText, time, message)
 	return msg
