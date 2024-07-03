@@ -11,23 +11,25 @@ import (
 type Level uint32
 
 const (
-	Debug Level = iota
-	Info
-	Warn
-	Error
-	Fatal
+	DebugLevel Level = iota
+	InfoLevel
+	WarnLevel
+	ErrorLevel
+	FatalLevel
 )
 
 func (level Level) MarshalText() ([]byte, error) {
 	switch level {
-	case Debug:
-		return []byte("Debug"), nil
-	case Info:
-		return []byte("Info"), nil
-	case Error:
-		return []byte("Error"), nil
-	case Fatal:
-		return []byte("Fatal"), nil
+	case DebugLevel:
+		return []byte("DEBU"), nil
+	case InfoLevel:
+		return []byte("INFO"), nil
+	case WarnLevel:
+		return []byte("WARN"), nil
+	case ErrorLevel:
+		return []byte("ERRO"), nil
+	case FatalLevel:
+		return []byte("FATA"), nil
 	}
 
 	return nil, fmt.Errorf("invalid log level: %d", level)
@@ -41,7 +43,7 @@ type Logify struct {
 func New() *Logify {
 	return &Logify{
 		out:   os.Stdout,
-		level: Info,
+		level: InfoLevel,
 	}
 }
 
@@ -59,7 +61,6 @@ func (l *Logify) log(level Level, message string, calldepth int) error {
 	if l.level > level {
 		return nil
 	}
-
 	logger := log.New(l.out, "", 0)
 	msg := formatLogMessage(level, message)
 	return logger.Output(calldepth, msg)
@@ -74,17 +75,41 @@ func (l *Logify) SetLevel(level Level) {
 }
 
 func (l *Logify) Debug(message string) {
-	l.log(Debug, message, 0)
+	l.log(DebugLevel, message, 0)
 }
 
-func (l *Logify) DebugF(format string, i ...interface{}) {
-	l.log(Debug, fmt.Sprintf(format, i...), 0)
+func (l *Logify) Debugf(format string, i ...interface{}) {
+	l.log(DebugLevel, fmt.Sprintf(format, i...), 0)
 }
 
 func (l *Logify) Info(message string) {
-	l.log(Info, message, 0)
+	l.log(InfoLevel, message, 0)
 }
 
-func (l *Logify) InfoF(format string, i ...interface{}) {
-	l.log(Info, fmt.Sprintf(format, i...), 0)
+func (l *Logify) Infof(format string, i ...interface{}) {
+	l.log(InfoLevel, fmt.Sprintf(format, i...), 0)
+}
+
+func (l *Logify) Warn(message string) {
+	l.log(WarnLevel, message, 0)
+}
+
+func (l *Logify) Warnf(format string, i ...interface{}) {
+	l.log(WarnLevel, fmt.Sprintf(format, i...), 0)
+}
+
+func (l *Logify) Error(message string) {
+	l.log(ErrorLevel, message, 0)
+}
+
+func (l *Logify) Errorf(format string, i ...interface{}) {
+	l.log(ErrorLevel, fmt.Sprintf(format, i...), 0)
+}
+
+func (l *Logify) Fatal(message string) {
+	l.log(FatalLevel, message, 0)
+}
+
+func (l *Logify) Fatalf(format string, i ...interface{}) {
+	l.log(FatalLevel, fmt.Sprintf(format, i...), 0)
 }

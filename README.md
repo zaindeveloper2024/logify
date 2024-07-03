@@ -1,1 +1,5 @@
 # Logify
+
+```sh
+go test
+```
