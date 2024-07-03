@@ -6,7 +6,9 @@ import (
 
 func main() {
 	log := logify.New()
-	log.Debug("Hello world")
-	log.DebugF("Hello %s", "world")
-	log.Info("Hello world")
+	log.SetLevel(logify.Debug)
+	log.DebugF("Hello %s", "debug")
+	log.Info("Hello info")
+	log.SetLevel(logify.Info)
+	log.DebugF("Hello %s", "debug")
 }

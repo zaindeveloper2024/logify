@@ -45,22 +45,24 @@ func New() *Logify {
 	}
 }
 
-func outputFormat(level Level, message string) string {
+func formatLogMessage(level Level, message string) string {
 	levelText, err := level.MarshalText()
 	if err != nil {
 		panic(err)
 	}
+
 	time := time.Now().Format(time.RFC3339)
 	msg := fmt.Sprintf("[%s] %s %s", levelText, time, message)
 	return msg
 }
 
 func (l *Logify) log(level Level, message string, calldepth int) error {
-	if l.level < level {
+	if l.level > level {
 		return nil
 	}
+
 	logger := log.New(l.out, "", 0)
-	msg := outputFormat(level, message)
+	msg := formatLogMessage(level, message)
 	return logger.Output(calldepth, msg)
 }
 
@@ -82,4 +84,8 @@ func (l *Logify) DebugF(format string, i ...interface{}) {
 
 func (l *Logify) Info(message string) {
 	l.log(Info, message, 0)
+}
+
+func (l *Logify) InfoF(format string, i ...interface{}) {
+	l.log(Info, fmt.Sprintf(format, i...), 0)
 }
